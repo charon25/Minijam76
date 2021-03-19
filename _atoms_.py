@@ -11,9 +11,8 @@ class Atom():
         self.can_decay = False
         self.can_absorb_neutron = False
         
-        
-    def show(self):
-        pass
+    def get_position(self):
+        return (self.x, self.y)
         
 class DecayingAtom(Atom):
     def __init__(self, x, y, w, h, decay_time):
