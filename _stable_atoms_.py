@@ -29,7 +29,7 @@ class Xe134(atoms.Atom):
         
 class Xe140(atoms.Atom):
     def __init__(self, x, y, vx=0.0, vy=0.0):
-        super().__init__(x, y, co.XE140_PATH, co.XE140_SIZE, vx, vy)
+        super().__init__(x, y, co.XE140_SIZE, co.XE140_SIZE, vx, vy)
         self.texture = Textures.XE140_TEXTURE.convert_alpha()
         
         

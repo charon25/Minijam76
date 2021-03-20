@@ -8,6 +8,7 @@ class Neutron():
         self.vx = float(vx)
         self.vy = float(vy)
         self.texture = Textures.NEUTRON_TEXTURE.convert_alpha()
+        self.to_delete = False
         
     def move(self, r):
         self.x += self.vx * r

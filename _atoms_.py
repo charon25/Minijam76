@@ -30,9 +30,15 @@ class Atom():
             self.reflect_vertical()
         if self.y < 0 or self.y + self.h > co.HEIGHT:
             self.reflect_horizontal()
-            
-        self.vx *= co.ATOM_BRAKE
-        self.vy *= co.ATOM_BRAKE
+        
+        if self.vx > 0:
+            self.vx = max(0, self.vx - co.ATOM_BRAKE * r)
+        elif self.vx < 0:
+            self.vx = min(0, self.vx + co.ATOM_BRAKE * r)
+        if self.vy > 0:
+            self.vy = max(0, self.vy - co.ATOM_BRAKE * r)
+        elif self.vy < 0:
+            self.vy = min(0, self.vy + co.ATOM_BRAKE * r)
             
     def reflect_horizontal(self):
         self.vy *= -1
@@ -64,7 +70,7 @@ class DecayingAtom(Atom):
         
     def age(self, dt):
         self.decay_time -= dt
-        max_shake = int(5 * (1 - self.decay_time / self.initial_decay_time))
+        max_shake = int(co.DECAY_MAX_SHAKE * (1 - self.decay_time / self.initial_decay_time))
         self.x = self.x0 + random.randint(-max_shake, max_shake)
         self.y = self.y0 + random.randint(-max_shake, max_shake)
         if self.decay_time <= 0:

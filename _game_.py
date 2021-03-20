@@ -24,6 +24,9 @@ class Game():
         #Objets
         self.neutrons = []
         self.atoms = []
+        self.atoms.append(neutron_atoms.U235(800, 300, 0))
+        self.neutrons.append(neutrons.Neutron(500, 320, 5, 0))
+        self.neutrons.append(neutrons.Neutron(200, 320, 5, 0))
         
         
     def stopping(self):
@@ -34,6 +37,7 @@ class Game():
         pyg.quit()
     
     def loop(self):
+        #if len(self.atoms) > 0:print(self.atoms[0].vx, self.atoms[0].vy)
         dt = self.clock.tick(500)
         self.listener.listen()
         self.screen.fill((255, 255, 255))
@@ -41,6 +45,11 @@ class Game():
         for neutron in self.neutrons:
             neutron.move(dt / co.FRAME_INTERVAL)
             self.screen.blit(neutron.texture, neutron.get_position())
+            for atom in self.atoms:
+                if neutron.does_collide_with_atom(atom):
+                    atom.is_hit_by_neutron(neutron)
+                    
+        self.neutrons[:] = [neutron for neutron in self.neutrons if not neutron.to_delete]
             
         for atom in self.atoms:
             atom.move(dt / co.FRAME_INTERVAL)
