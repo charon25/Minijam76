@@ -1,14 +1,14 @@
-import _texture_manager_ as Textures
+import _texture_manager_ as textures
 import _atoms_ as atoms
 import _neutron_atoms_ as neutron_atoms
-import _texture_manager_ as Textures
+import _texture_manager_ as textures
 import co
 
 
 class U237(atoms.DecayingAtom):
     def __init__(self, x, y):
         super().__init__(x, y, co.U237_SIZE, co.U237_SIZE, co.U237_DECAY)
-        self.texture = Textures.U238_TEXTURE.convert_alpha()
+        self.texture = textures.U238_TEXTURE.convert_alpha()
         
     def disintegrate(self):
         self.to_delete = True
@@ -18,7 +18,7 @@ class U237(atoms.DecayingAtom):
 class U239(atoms.DecayingAtom):
     def __init__(self, x, y):
         super().__init__(x, y, co.U239_SIZE, co.U239_SIZE, co.U239_DECAY)
-        self.texture = Textures.U239_TEXTURE.convert_alpha()
+        self.texture = textures.U239_TEXTURE.convert_alpha()
         
     def disintegrate(self):
         self.to_delete = True
@@ -28,7 +28,7 @@ class U239(atoms.DecayingAtom):
 class Np238(atoms.DecayingAtom):
     def __init__(self, x, y):
         super().__init__(x, y, co.NP238_SIZE, co.NP238_SIZE, co.NP238_DECAY)
-        self.texture = Textures.NP238_TEXTURE.convert_alpha()
+        self.texture = textures.NP238_TEXTURE.convert_alpha()
         
     def disintegrate(self):
         self.to_delete = True
@@ -38,7 +38,7 @@ class Np238(atoms.DecayingAtom):
 class Np239(atoms.DecayingAtom):
     def __init__(self, x, y):
         super().__init__(x, y, co.NP239_SIZE, co.NP239_SIZE, co.NP239_DECAY)
-        self.texture = Textures.NP239_TEXTURE.convert_alpha()
+        self.texture = textures.NP239_TEXTURE.convert_alpha()
         
     def disintegrate(self):
         self.to_delete = True
@@ -48,7 +48,7 @@ class Np239(atoms.DecayingAtom):
 class Pu238(atoms.DecayingAtom):
     def __init__(self, x, y):
         super().__init__(x, y, co.PU238_SIZE, co.PU238_SIZE, co.PU239_DECAY)
-        self.texture = Textures.PU238_TEXTURE.convert_alpha()
+        self.texture = textures.PU238_TEXTURE.convert_alpha()
         
     def disintegrate(self):
         self.to_delete = True

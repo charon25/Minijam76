@@ -6,7 +6,9 @@ import _stable_atoms_ as stable_atoms
 import _neutron_atoms_ as neutron_atoms
 import _decaying_atoms_ as decaying_atoms
 import _neutrons_ as neutrons
-import time
+import _texture_manager_ as textures
+import util
+import time, math
 
 class Game():
     def __init__(self):
@@ -29,6 +31,7 @@ class Game():
         self.atoms = []
         #Actions
         self.is_clicking = False
+        self.can_play = False
         self.click_x = -1
         self.click_y = -1
         self.mouse_x = -1
@@ -68,38 +71,41 @@ class Game():
             
         self.atoms[:] = [atom for atom in self.atoms if not atom.to_delete]
         
-        if self.is_clicking:
-            pyg.draw.line(self.screen, (0, 0, 0), (self.click_x, self.click_y), (self.mouse_x, self.mouse_y))
+        self.can_play = (len(self.neutrons) == 0)
+        if self.is_clicking and self.can_play:
+            self.draw_player_arrow()
             
         pyg.display.flip()
         
     def mousedown(self, x, y, button):
-        if button != 1:
-            return
-        self.is_clicking = True
-        self.click_x = x
-        self.click_y = y
-        pass
+        if button == co.LEFT_CLICK:
+            self.is_clicking = True
+            self.click_x = x
+            self.click_y = y
+        if button == co.RIGHT_CLICK:
+            self.is_clicking = False
     
     def mouseup(self, x, y, button):
-        if button != 1:
+        if button != co.LEFT_CLICK:
             return
+        if self.can_play and self.is_clicking and util.distance(self.click_x, self.click_y, self.mouse_x, self.mouse_y) >= co.MIN_DISTANCE_TO_PLAY:
+            self.generate_neutron()
         self.is_clicking = False
         self.click_x = -1
         self.click_y = -1
-        pass
     
     def mousemove(self, x, y, dx, dy):
         self.mouse_x = x
         self.mouse_y = y
-        pass
     
+    def draw_player_arrow(self):
+        pyg.draw.line(self.screen, co.ARROW_COLOR, (self.click_x, self.click_y), (self.mouse_x, self.mouse_y), co.ARROW_WIDTH)
     
-    
-    
-    
-    
-    
+    def generate_neutron(self):
+        angle = math.pi/2 - math.atan2(self.mouse_x - self.click_x, (self.mouse_y - self.click_y))
+        vx, vy = util.polar_to_cartesian(co.NEUTRON_SPEED, angle)
+        neutron = neutrons.Neutron(self.click_x, self.click_y, vx, vy)
+        self.neutrons.append(neutron)
     
     
     

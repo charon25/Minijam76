@@ -1,7 +1,7 @@
 import _atoms_ as atoms
 import _stable_atoms_ as stable_atoms
 import _decaying_atoms_ as decaying_atoms
-import _texture_manager_ as Textures
+import _texture_manager_ as textures
 import _neutrons_ as neutrons
 import co
 import util
@@ -10,7 +10,7 @@ import random
 class U234(atoms.NeutronAtom):
     def __init__(self, x, y):
         super().__init__(x, y, co.U234_SIZE, co.U234_SIZE)
-        self.texture = Textures.U234_TEXTURE.convert_alpha()
+        self.texture = textures.U234_TEXTURE.convert_alpha()
         
     def is_hit_by_neutron(self, neutron):
         self.to_delete = True
@@ -21,7 +21,7 @@ class U234(atoms.NeutronAtom):
 class U235(atoms.NeutronAtom):
     def __init__(self, x, y, _type):
         super().__init__(x, y, co.U235_SIZE, co.U235_SIZE)
-        self.texture = Textures.U235_TEXTURE.convert_alpha()
+        self.texture = textures.U235_TEXTURE.convert_alpha()
         self.type = _type
         
     def is_hit_by_neutron(self, neutron):
@@ -39,10 +39,8 @@ class U235(atoms.NeutronAtom):
         cx = self.x + self.w / 2
         cy = self.y + self.h / 2
         #Neutrons
-        ncx = cx - co.NEUTRON_SIZE / 2
-        ncy = cy - co.NEUTRON_SIZE / 2
-        neut1 = neutrons.Neutron(ncx, ncy, *util.vector_rotation(neutron.vx, neutron.vy, co.NEUTRON_CREATION_ANGLE_U))
-        neut2 = neutrons.Neutron(ncx, ncy, *util.vector_rotation(neutron.vx, neutron.vy, -co.NEUTRON_CREATION_ANGLE_U))
+        neut1 = neutrons.Neutron(cx, cy, *util.vector_rotation(neutron.vx, neutron.vy, co.NEUTRON_CREATION_ANGLE_U))
+        neut2 = neutrons.Neutron(cx, cy, *util.vector_rotation(neutron.vx, neutron.vy, -co.NEUTRON_CREATION_ANGLE_U))
         self.created_neutrons += [neut1, neut2]
         #Atomes
         sr = stable_atoms.Sr94(cx - co.SR94_SIZE / 2,
@@ -63,11 +61,9 @@ class U235(atoms.NeutronAtom):
         cx = self.x + self.w / 2
         cy = self.y + self.h / 2
         #Neutrons
-        ncx = cx - co.NEUTRON_SIZE / 2
-        ncy = cy - co.NEUTRON_SIZE / 2
-        neut1 = neutrons.Neutron(ncx, ncy, neutron.vx, neutron.vy)
-        neut2 = neutrons.Neutron(ncx, ncy, *util.vector_rotation(neutron.vx, neutron.vy, co.NEUTRON_CREATION_ANGLE_U))
-        neut3 = neutrons.Neutron(ncx, ncy, *util.vector_rotation(neutron.vx, neutron.vy, -co.NEUTRON_CREATION_ANGLE_U))
+        neut1 = neutrons.Neutron(cx, cy, neutron.vx, neutron.vy)
+        neut2 = neutrons.Neutron(cx, cy, *util.vector_rotation(neutron.vx, neutron.vy, co.NEUTRON_CREATION_ANGLE_U))
+        neut3 = neutrons.Neutron(cx, cy, *util.vector_rotation(neutron.vx, neutron.vy, -co.NEUTRON_CREATION_ANGLE_U))
         self.created_neutrons += [neut1, neut2, neut3]
         #Atomes
         kr = stable_atoms.Kr93(cx - co.KR93_SIZE / 2,
@@ -88,7 +84,7 @@ class U235(atoms.NeutronAtom):
 class U236(atoms.NeutronAtom):
     def __init__(self, x, y):
         super().__init__(x, y, co.U236_SIZE, co.U236_SIZE)
-        self.texture = Textures.U236_TEXTURE.convert_alpha()
+        self.texture = textures.U236_TEXTURE.convert_alpha()
         
     def is_hit_by_neutron(self, neutron):
         self.to_delete = True
@@ -99,7 +95,7 @@ class U236(atoms.NeutronAtom):
 class U238(atoms.NeutronAtom):
     def __init__(self, x, y):
         super().__init__(x, y, co.U238_SIZE, co.U238_SIZE)
-        self.texture = Textures.U238_TEXTURE.convert_alpha()
+        self.texture = textures.U238_TEXTURE.convert_alpha()
         
     def is_hit_by_neutron(self, neutron):
         self.to_delete = True
@@ -110,7 +106,7 @@ class U238(atoms.NeutronAtom):
 class Np237(atoms.NeutronAtom):
     def __init__(self, x, y):
         super().__init__(x, y, co.NP237_SIZE, co.NP237_SIZE)
-        self.texture = Textures.NP237_TEXTURE.convert_alpha()
+        self.texture = textures.NP237_TEXTURE.convert_alpha()
         
     def is_hit_by_neutron(self, neutron):
         self.to_delete = True
@@ -121,7 +117,7 @@ class Np237(atoms.NeutronAtom):
 class Pu239(atoms.NeutronAtom):
     def __init__(self, x, y):
         super().__init__(x, y, co.PU239_SIZE, co.PU239_SIZE)
-        self.texture = Textures.PU239_TEXTURE.convert_alpha()
+        self.texture = textures.PU239_TEXTURE.convert_alpha()
         
     def is_hit_by_neutron(self, neutron):
         self.to_delete = True
@@ -129,11 +125,9 @@ class Pu239(atoms.NeutronAtom):
         cx = self.x + self.w / 2
         cy = self.y + self.h / 2
         #Neutrons
-        ncx = cx - co.NEUTRON_SIZE / 2
-        ncy = cy - co.NEUTRON_SIZE / 2
-        neut1 = neutrons.Neutron(ncx, ncy, neutron.vx, neutron.vy)
-        neut2 = neutrons.Neutron(ncx, ncy, *util.vector_rotation(neutron.vx, neutron.vy, co.NEUTRON_CREATION_ANGLE_PU))
-        neut3 = neutrons.Neutron(ncx, ncy, *util.vector_rotation(neutron.vx, neutron.vy, -co.NEUTRON_CREATION_ANGLE_PU))
+        neut1 = neutrons.Neutron(cx, cy, neutron.vx, neutron.vy)
+        neut2 = neutrons.Neutron(cx, cy, *util.vector_rotation(neutron.vx, neutron.vy, co.NEUTRON_CREATION_ANGLE_PU))
+        neut3 = neutrons.Neutron(cx, cy, *util.vector_rotation(neutron.vx, neutron.vy, -co.NEUTRON_CREATION_ANGLE_PU))
         self.created_neutrons += [neut1, neut2, neut3]
         #Atomes
         zr = stable_atoms.Zr103(cx - co.ZR103_SIZE / 2,
