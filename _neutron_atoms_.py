@@ -21,8 +21,8 @@ class U234(atoms.NeutronAtom):
 class U235(atoms.NeutronAtom):
     def __init__(self, x, y, _type):
         super().__init__(x, y, co.U235_SIZE, co.U235_SIZE)
-        self.texture = textures.U235_TEXTURE.convert_alpha()
         self.type = _type
+        self.texture = textures.U235_TEXTURES[self.type].convert_alpha()
         
     def is_hit_by_neutron(self, neutron):
         self.to_delete = True

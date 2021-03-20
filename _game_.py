@@ -29,6 +29,7 @@ class Game():
         #Objets
         self.neutrons = []
         self.atoms = []
+        self.electrons = []
         #Actions
         self.is_clicking = False
         self.can_play = False
@@ -51,6 +52,12 @@ class Game():
         self.listener.listen()
         self.screen.fill((255, 255, 255))
         
+        for electron in self.electrons:
+            electron.move(dt / co.FRAME_INTERVAL)
+            self.screen.blit(electron.texture, electron.get_position())
+            
+        self.electrons[:] = [electron for electron in self.electrons if not electron.to_delete]
+        
         for neutron in self.neutrons:
             neutron.move(dt / co.FRAME_INTERVAL)
             self.screen.blit(neutron.texture, neutron.get_position())
@@ -68,6 +75,8 @@ class Game():
                 self.atoms += atom.created_atoms
             if atom.has_created_neutrons():
                 self.neutrons += atom.created_neutrons
+            if atom.has_emitted_electron():
+                self.electrons.append(atom.electron)
             
         self.atoms[:] = [atom for atom in self.atoms if not atom.to_delete]
         

@@ -1,6 +1,8 @@
 import co
-import random
+import random, math
+import util
 import _neutrons_ as neutrons
+import _electrons_ as electrons
 
 class Atom():
     def __init__(self, x, y, w, h, vx=0.0, vy=0.0):
@@ -18,6 +20,7 @@ class Atom():
         self.to_delete = False
         self.created_atoms = []
         self.created_neutrons = []
+        self.electron = None
         
     def get_position(self):
         return (self.x, self.y)
@@ -51,6 +54,9 @@ class Atom():
         
     def has_created_neutrons(self):
         return (len(self.created_neutrons) > 0)
+    
+    def has_emitted_electron(self):
+        return (self.electron is not None)
         
     def age(self, dt):
         pass
@@ -74,10 +80,15 @@ class DecayingAtom(Atom):
         self.x = self.x0 + random.randint(-max_shake, max_shake)
         self.y = self.y0 + random.randint(-max_shake, max_shake)
         if self.decay_time <= 0:
+            self.emit_electron()
             self.disintegrate()
             
     def disintegrate(self):
         pass
+    
+    def emit_electron(self):
+        vx, vy = util.polar_to_cartesian(co.ELECTRON_SPEED, random.uniform(0, 2*math.pi))
+        self.electron = electrons.Electron(self.x0 + self.w / 2, self.y0 + self.h / 2, vx, vy)
         
     
 class NeutronAtom(Atom):
