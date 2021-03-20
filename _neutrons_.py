@@ -8,6 +8,7 @@ class Neutron():
         self.vx = float(vx)
         self.vy = float(vy)
         self.texture = Textures.NEUTRON_TEXTURE.convert_alpha()
+        self.bounces = 0
         self.to_delete = False
         
     def move(self, r):
@@ -23,10 +24,17 @@ class Neutron():
         return (self.x, self.y)
         
     def reflect_horizontal(self):
+        self.add_bounce()
         self.vy *= -1
         
     def reflect_vertical(self):
+        self.add_bounce()
         self.vx *= -1
+        
+    def add_bounce(self):
+        self.bounces += 1
+        if self.bounces > co.NEUTRON_MAX_BOUNCES:
+            self.to_delete = True
         
     def does_collide_with_atom(self, atom):
         if not atom.can_absorb_neutron:

@@ -19,14 +19,20 @@ class Game():
         #Listener
         self.listener = events.EventListener()
         self.listener.set_quit_callback(self.stopping)
+        self.listener.set_mousedown_callback(self.mousedown)
+        self.listener.set_mouseup_callback(self.mouseup)
+        self.listener.set_mousemove_callback(self.mousemove)
         #Horloge
         self.clock = pyg.time.Clock()
         #Objets
         self.neutrons = []
         self.atoms = []
-        self.atoms.append(neutron_atoms.U235(800, 300, 0))
-        self.neutrons.append(neutrons.Neutron(500, 320, 5, 0))
-        self.neutrons.append(neutrons.Neutron(200, 320, 5, 0))
+        #Actions
+        self.is_clicking = False
+        self.click_x = -1
+        self.click_y = -1
+        self.mouse_x = -1
+        self.mouse_y = -1
         
         
     def stopping(self):
@@ -61,5 +67,53 @@ class Game():
                 self.neutrons += atom.created_neutrons
             
         self.atoms[:] = [atom for atom in self.atoms if not atom.to_delete]
+        
+        if self.is_clicking:
+            pyg.draw.line(self.screen, (0, 0, 0), (self.click_x, self.click_y), (self.mouse_x, self.mouse_y))
             
         pyg.display.flip()
+        
+    def mousedown(self, x, y, button):
+        if button != 1:
+            return
+        self.is_clicking = True
+        self.click_x = x
+        self.click_y = y
+        pass
+    
+    def mouseup(self, x, y, button):
+        if button != 1:
+            return
+        self.is_clicking = False
+        self.click_x = -1
+        self.click_y = -1
+        pass
+    
+    def mousemove(self, x, y, dx, dy):
+        self.mouse_x = x
+        self.mouse_y = y
+        pass
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
