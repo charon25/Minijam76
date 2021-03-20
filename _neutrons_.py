@@ -1,6 +1,5 @@
 import co
 import _texture_manager_ as Textures
-from _atoms_ import Atom
 
 class Neutron():
     def __init__(self, x, y, vx=0.0, vy=0.0):
@@ -10,9 +9,9 @@ class Neutron():
         self.vy = float(vy)
         self.texture = Textures.NEUTRON_TEXTURE.convert_alpha()
         
-    def move(self, dt):
-        self.x += self.vx * dt / 16
-        self.y += self.vy * dt / 16
+    def move(self, r):
+        self.x += self.vx * r
+        self.y += self.vy * r
         #Réflection contre les murs
         if self.x < 0 or self.x + co.NEUTRON_SIZE > co.WIDTH:
             self.reflect_vertical()
@@ -28,7 +27,7 @@ class Neutron():
     def reflect_vertical(self):
         self.vx *= -1
         
-    def does_collide_with_atom(self, atom : Atom):
+    def does_collide_with_atom(self, atom):
         if not atom.can_absorb_neutron:
             return False
         if self.x + co.NEUTRON_SIZE < atom.x:

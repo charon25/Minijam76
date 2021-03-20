@@ -1,10 +1,11 @@
 import pygame as pyg
 import co
-from _events_ import EventListener
-from _neutrons_ import Neutron
-from _stable_atoms_ import Kr93, Sr94, Zr103, Xe134, Xe140, Ba140
-from _neutron_atoms_ import U234, U235, U236, U238, Pu239
-from _decaying_atoms_ import U237, U239, Np237, Np238, Np239, Pu238
+import _events_ as events
+import _atoms_ as atoms
+import _stable_atoms_ as stable_atoms
+import _neutron_atoms_ as neutron_atoms
+import _decaying_atoms_ as decaying_atoms
+import _neutrons_ as neutrons
 import time
 
 class Game():
@@ -16,7 +17,7 @@ class Game():
         pyg.display.set_caption(co.SCREEN_TITLE)
         self.screen = pyg.display.set_mode(co.SCREEN_SIZE)
         #Listener
-        self.listener = EventListener()
+        self.listener = events.EventListener()
         self.listener.set_quit_callback(self.stopping)
         #Horloge
         self.clock = pyg.time.Clock()
@@ -38,10 +39,18 @@ class Game():
         self.screen.fill((255, 255, 255))
         
         for neutron in self.neutrons:
-            neutron.move(dt)
+            neutron.move(dt / co.FRAME_INTERVAL)
             self.screen.blit(neutron.texture, neutron.get_position())
             
         for atom in self.atoms:
+            atom.move(dt / co.FRAME_INTERVAL)
+            atom.age(dt)
             self.screen.blit(atom.texture, atom.get_position())
+            if atom.has_created_atoms():
+                self.atoms += atom.created_atoms
+            if atom.has_created_neutrons():
+                self.neutrons += atom.created_neutrons
+            
+        self.atoms[:] = [atom for atom in self.atoms if not atom.to_delete]
             
         pyg.display.flip()

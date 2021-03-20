@@ -1,40 +1,57 @@
-from _atoms_ import DecayingAtom
+import _texture_manager_ as Textures
+import _atoms_ as atoms
+import _neutron_atoms_ as neutron_atoms
 import _texture_manager_ as Textures
 import co
 
 
-class U237(DecayingAtom):
-    def __init__(self, x, y, w, h, decay_time):
-        super().__init__(x, y, co.U237_SIZE, co.U237_SIZE, decay_time)
+class U237(atoms.DecayingAtom):
+    def __init__(self, x, y):
+        super().__init__(x, y, co.U237_SIZE, co.U237_SIZE, co.U237_DECAY)
         self.texture = Textures.U238_TEXTURE.convert_alpha()
         
-class U239(DecayingAtom):
-    def __init__(self, x, y, w, h, decay_time):
-        super().__init__(x, y, co.U239_SIZE, co.U239_SIZE, decay_time)
+    def disintegrate(self):
+        self.to_delete = True
+        self.created_atoms.append(neutron_atoms.Np237(self.x0, self.y0))
+        
+        
+class U239(atoms.DecayingAtom):
+    def __init__(self, x, y):
+        super().__init__(x, y, co.U239_SIZE, co.U239_SIZE, co.U239_DECAY)
         self.texture = Textures.U239_TEXTURE.convert_alpha()
         
+    def disintegrate(self):
+        self.to_delete = True
+        self.created_atoms.append(neutron_atoms.Np239(self.x0, self.y0))
+       
         
-class Np237(DecayingAtom):
-    def __init__(self, x, y, w, h, decay_time):
-        super().__init__(x, y, co.NP237_SIZE, co.NP237_SIZE, decay_time)
-        self.texture = Textures.NP237_TEXTURE.convert_alpha()
-        
-        
-class Np238(DecayingAtom):
-    def __init__(self, x, y, w, h, decay_time):
-        super().__init__(x, y, co.NP238_SIZE, co.NP238_SIZE, decay_time)
+class Np238(atoms.DecayingAtom):
+    def __init__(self, x, y):
+        super().__init__(x, y, co.NP238_SIZE, co.NP238_SIZE, co.NP238_DECAY)
         self.texture = Textures.NP238_TEXTURE.convert_alpha()
         
+    def disintegrate(self):
+        self.to_delete = True
+        self.created_atoms.append(Pu238(self.x0, self.y0))
         
-class Np239(DecayingAtom):
-    def __init__(self, x, y, w, h, decay_time):
-        super().__init__(x, y, co.NP239_SIZE, co.NP239_SIZE, decay_time)
+        
+class Np239(atoms.DecayingAtom):
+    def __init__(self, x, y):
+        super().__init__(x, y, co.NP239_SIZE, co.NP239_SIZE, co.NP239_DECAY)
         self.texture = Textures.NP239_TEXTURE.convert_alpha()
         
+    def disintegrate(self):
+        self.to_delete = True
+        self.created_atoms.append(neutron_atoms.Pu239(self.x0, self.y0))
         
-class Pu238(DecayingAtom):
-    def __init__(self, x, y, w, h, decay_time):
-        super().__init__(x, y, co.PU238_SIZE, co.PU238_SIZE, decay_time)
+        
+class Pu238(atoms.DecayingAtom):
+    def __init__(self, x, y):
+        super().__init__(x, y, co.PU238_SIZE, co.PU238_SIZE, co.PU239_DECAY)
         self.texture = Textures.PU238_TEXTURE.convert_alpha()
+        
+    def disintegrate(self):
+        self.to_delete = True
+        self.created_atoms.append(neutron_atoms.U234(self.x0, self.y0))
         
         
