@@ -29,6 +29,8 @@ class Game():
         #Objets
         self.neutrons = []
         self.atoms = []
+        self.atoms.append(stable_atoms.Kr93(700, 300))
+        self.atoms.append(stable_atoms.Ba140(800, 300))
         self.electrons = []
         #Actions
         self.is_clicking = False
