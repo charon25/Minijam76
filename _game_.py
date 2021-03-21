@@ -34,6 +34,7 @@ class Game():
         self.clock = pyg.time.Clock()
         #Objets
         self.neutrons = []
+        self.launched_neutron = 0
         self.atoms = []
         self.electrons = []
         #Actions
@@ -66,6 +67,7 @@ class Game():
             
     def load_next_level(self):
         level = self.levels.get_next_level()
+        self.launched_neutron = 0
         self.atoms = level[0].copy()
         self.level_text = level[1], level[2]
           
@@ -87,6 +89,7 @@ class Game():
         self.screen.blit(self.background, (0, 0))
         
         self.draw_text()
+        self.draw_neutron_count()
         
         for electron in self.electrons:
             electron.move(dt / co.FRAME_INTERVAL)
@@ -134,6 +137,10 @@ class Game():
         else:
             pyg.draw.line(self.screen, co.ARROW_COLOR_CLOSE, (self.click_x, self.click_y), (self.mouse_x, self.mouse_y), co.ARROW_WIDTH)
             
+    def draw_neutron_count(self):
+        self.screen.blit(textures.NEUTRON_TEXTURE.convert_alpha(), (co.NEUTRON_COUNT_X, co.NEUTRON_COUNT_Y))
+        util.draw_text(self.screen, str(self.launched_neutron), co.NEUTRON_COUNT_TEXT_SIZE, (co.NEUTRON_COUNT_TEXT_X, co.NEUTRON_COUNT_TEXT_Y), (0, 0, 0))
+            
             
     def menu_mousedown(self, x, y, button):
         if util.is_point_in_rect(co.LEVELS_BT, x, y):
@@ -177,6 +184,7 @@ class Game():
     
     
     def generate_neutron(self):
+        self.launched_neutron += 1
         angle = math.pi/2 - math.atan2(self.mouse_x - self.click_x, (self.mouse_y - self.click_y))
         vx, vy = util.polar_to_cartesian(co.NEUTRON_SPEED, angle)
         neutron = neutrons.Neutron(self.click_x, self.click_y, vx, vy)

@@ -41,4 +41,4 @@ class Levels():
     
     def create_random_level(self):
         
-        return (, "", "")
+        return ([], "", "")
