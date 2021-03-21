@@ -128,7 +128,7 @@ class Game():
             self.draw_game(dt)
             pyg.display.flip()
             if self.is_level_over():
-                if self.levels.index < co.LEVELS_COUNT:
+                if self.play_mode == co.RANDOM_MODE or self.levels.index < co.LEVELS_COUNT:
                     self.change_state(co.EOL_STATE)
                 else:
                     self.change_state(co.EOG_STATE)

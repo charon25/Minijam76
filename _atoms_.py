@@ -57,13 +57,9 @@ class Atom():
             self.vy = min(0, self.vy + co.ATOM_BRAKE * r)
             
     def reflect_horizontal(self):
-        if self.vy > 1:
-            pyg.event.post(pyg.event.Event(co.WALL_TYPE))
         self.vy *= -1
         
     def reflect_vertical(self):
-        if self.vx > 1:
-            pyg.event.post(pyg.event.Event(co.WALL_TYPE))
         self.vx *= -1
         
     def has_created_atoms(self):

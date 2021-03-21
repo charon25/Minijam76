@@ -139,7 +139,7 @@ class Levels():
           
         #
         self.line1 = ""
-        self.line2 = "I kinda ran out of time for more levels, but you can still play random ones!"
+        self.line2 = "I ran out of time for more levels, but you can still play random ones!"
         self.required_neutrons = 2
             
 
