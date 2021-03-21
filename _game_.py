@@ -28,6 +28,7 @@ class Game():
         self.eol = textures.EOL_TEXTURE.convert_alpha()
         self.eog = textures.EOG_TEXTURE.convert_alpha()
         self.restart_bt = textures.RESTART_BT_TEXTURE.convert_alpha()
+        self.menu_bt = textures.MENU_BT_TEXTURE.convert_alpha()
         self.help = textures.HELP_TEXTURE.convert_alpha()
         #Listener
         self.listener = events.EventListener()
@@ -100,6 +101,7 @@ class Game():
         self.atoms = []
         self.electrons = []
         self.change_state(co.PLAY_STATE)
+        self.is_clicking = False
             
     def load_level(self, level):
         self.reset_screen()
@@ -191,6 +193,7 @@ class Game():
         if self.game_state == co.PLAY_STATE:
             self.draw_neutron_count()
             self.screen.blit(self.restart_bt, (co.RESTART_BT_X, co.RESTART_BT_Y))
+            self.screen.blit(self.menu_bt, (co.MENU_BT_X, co.MENU_BT_Y))
             
         if sum(atom.over for atom in self.atoms) == 0:
             self.time_since_over += dt
@@ -303,6 +306,9 @@ class Game():
                 elif self.play_mode == co.RANDOM_MODE:
                     self.restart_random_level()
                 return
+            if util.is_point_in_rect(co.MENU_BT, x, y):
+                self.sounds.play_sound("click")
+                self.change_state(co.MENU_STATE)
             self.is_clicking = True
             self.click_x = x
             self.click_y = y

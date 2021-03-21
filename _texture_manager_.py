@@ -10,6 +10,8 @@ EOL_TEXTURE = pyg.image.load(co.EOL_PATH)
 EOG_TEXTURE = pyg.image.load(co.EOG_PATH)
 #BOUTON RESTART
 RESTART_BT_TEXTURE = pyg.image.load(co.RESTART_BT_PATH)
+#BOUTON MENU
+MENU_BT_TEXTURE = pyg.image.load(co.MENU_BT_PATH)
 #AIDE
 HELP_TEXTURE = pyg.image.load(co.HELP_PATH)
 
