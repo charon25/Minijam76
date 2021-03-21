@@ -8,7 +8,7 @@ import co
 class U237(atoms.DecayingAtom):
     def __init__(self, x, y):
         super().__init__(x, y, co.U237_SIZE, co.U237_SIZE, co.U237_DECAY)
-        self.texture = textures.U238_TEXTURE.convert_alpha()
+        self.texture = textures.U237_TEXTURE.convert_alpha()
         
     def disintegrate(self):
         self.to_delete = True
@@ -22,7 +22,7 @@ class U239(atoms.DecayingAtom):
         
     def disintegrate(self):
         self.to_delete = True
-        self.created_atoms.append(neutron_atoms.Np239(self.x0, self.y0))
+        self.created_atoms.append(Np239(self.x0, self.y0))
        
         
 class Np238(atoms.DecayingAtom):
@@ -52,6 +52,6 @@ class Pu238(atoms.DecayingAtom):
         
     def disintegrate(self):
         self.to_delete = True
-        self.created_atoms.append(neutron_atoms.U234(self.x0, self.y0))
+        self.created_atoms.append(neutron_atoms.U234(self.x0, self.y0, 2))
         
         

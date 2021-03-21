@@ -8,14 +8,15 @@ import util
 import random
 
 class U234(atoms.NeutronAtom):
-    def __init__(self, x, y):
+    def __init__(self, x, y, _type):
         super().__init__(x, y, co.U234_SIZE, co.U234_SIZE)
         self.texture = textures.U234_TEXTURE.convert_alpha()
+        self.type = _type
         
     def is_hit_by_neutron(self, neutron):
         self.to_delete = True
         neutron.to_delete = True
-        self.created_atoms.append(U235(self.x, self.y))
+        self.created_atoms.append(U235(self.x, self.y, self.type))
 
 
 class U235(atoms.NeutronAtom):

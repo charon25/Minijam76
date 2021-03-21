@@ -7,6 +7,8 @@ BACKGROUND_TEXTURE = pyg.image.load(co.BACKGROUND_PATH)
 MENU_TEXTURE = pyg.image.load(co.MENU_PATH)
 #FIN NIVEAU
 EOL_TEXTURE = pyg.image.load(co.EOL_PATH)
+#BOUTON RESTART
+RESTART_BT_TEXTURE = pyg.image.load(co.RESTART_BT_PATH)
 
 #NEUTRON
 NEUTRON_TEXTURE = pyg.image.load(co.NEUTRON_PATH)

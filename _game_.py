@@ -23,6 +23,7 @@ class Game():
         self.background = textures.BACKGROUND_TEXTURE.convert_alpha()
         self.menu = textures.MENU_TEXTURE.convert_alpha()
         self.eol = textures.EOL_TEXTURE.convert_alpha()
+        self.restart_bt = textures.RESTART_BT_TEXTURE.convert_alpha()
         #Listener
         self.listener = events.EventListener()
         self.listener.set_quit_callback(self.stopping)
@@ -35,6 +36,7 @@ class Game():
         self.is_menu_drawn = False
         #Horloge
         self.clock = pyg.time.Clock()
+        self.time_since_over = 0
         #Objets
         self.neutrons = []
         self.launched_neutrons = 0
@@ -124,6 +126,7 @@ class Game():
         self.draw_text()
         if self.game_state == co.PLAY_STATE:
             self.draw_neutron_count()
+            self.screen.blit(self.restart_bt, (co.RESTART_BT_X, co.RESTART_BT_Y))
         
         for electron in self.electrons:
             electron.move(dt / co.FRAME_INTERVAL)
@@ -153,10 +156,15 @@ class Game():
             
         self.atoms[:] = [atom for atom in self.atoms if not atom.to_delete]
         
-        self.can_play = (len(self.neutrons) == 0) and (self.game_state == co.PLAY_STATE)
+        self.can_play = (self.game_state == co.PLAY_STATE)
         self.is_far_enough = (util.distance(self.click_x, self.click_y, self.mouse_x, self.mouse_y) >= co.MIN_DISTANCE_TO_PLAY)
         if self.is_clicking and self.can_play:
             self.draw_player_arrow()
+            
+        if sum(atom.over for atom in self.atoms) == 0:
+            self.time_since_over += dt
+        else:
+            self.time_since_over = 0
             
             
     def draw_text(self):
@@ -229,6 +237,9 @@ class Game():
         if button == co.LEFT_CLICK:
             if y > co.HEIGHT:
                 return
+            if util.is_point_in_rect(co.RESTART_BT, x, y):
+                self.restart_level()
+                return
             self.is_clicking = True
             self.click_x = x
             self.click_y = y
@@ -257,7 +268,7 @@ class Game():
         self.neutrons.append(neutron)
     
     def is_level_over(self):
-        return (sum(atom.over for atom in self.atoms) == 0) and (len(self.neutrons) == 0)
+        return self.time_since_over > co.TIME_WITHOUT_ACTION
     
     
     
