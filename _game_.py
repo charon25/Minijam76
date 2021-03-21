@@ -22,6 +22,7 @@ class Game():
         #Textures
         self.background = textures.BACKGROUND_TEXTURE.convert_alpha()
         self.menu = textures.MENU_TEXTURE.convert_alpha()
+        self.eol = textures.EOL_TEXTURE.convert_alpha()
         #Listener
         self.listener = events.EventListener()
         self.listener.set_quit_callback(self.stopping)
@@ -30,11 +31,13 @@ class Game():
         self.change_state(co.MENU_STATE)
         self.levels = levels_manager.Levels()
         self.level_text = ["", ""]
+        self.level_required_neutrons = -1
+        self.is_menu_drawn = False
         #Horloge
         self.clock = pyg.time.Clock()
         #Objets
         self.neutrons = []
-        self.launched_neutron = 0
+        self.launched_neutrons = 0
         self.atoms = []
         self.electrons = []
         #Actions
@@ -57,19 +60,42 @@ class Game():
     def change_state(self, new_state):
         self.game_state = new_state
         if self.game_state == co.MENU_STATE:
+            self.is_menu_drawn = False
             self.listener.set_mousedown_callback(self.menu_mousedown)
-            self.listener.set_mouseup_callback(self.menu_mouseup)
-            self.listener.set_mousemove_callback(self.menu_mousemove)
+            self.listener.set_mouseup_callback(self.void)
+            self.listener.set_mousemove_callback(self.void)
         elif self.game_state == co.PLAY_STATE:
             self.listener.set_mousedown_callback(self.play_mousedown)
             self.listener.set_mouseup_callback(self.play_mouseup)
             self.listener.set_mousemove_callback(self.play_mousemove)
+        elif self.game_state == co.EOL_STATE:
+            self.listener.set_mousedown_callback(self.eol_mousedown)
+            self.listener.set_mouseup_callback(self.void)
+            self.listener.set_mousemove_callback(self.void)
+            
+    def reset_screen(self):
+        self.neutrons = []
+        self.launched_neutrons = 0
+        self.atoms = []
+        self.electrons = []
+        self.change_state(co.PLAY_STATE)
             
     def load_next_level(self):
+        self.reset_screen()
+        #
         level = self.levels.get_next_level()
-        self.launched_neutron = 0
         self.atoms = level[0].copy()
         self.level_text = level[1], level[2]
+        self.level_required_neutrons = level[3]
+        
+    def restart_level(self):
+        self.reset_screen()
+        #
+        level = self.levels.get_current_level()
+        self.atoms = level[0].copy()
+        self.level_text = level[1], level[2]
+        self.level_required_neutrons = level[3]
+        
           
     def loop(self):
         dt = self.clock.tick(500)
@@ -78,18 +104,26 @@ class Game():
             self.draw_menu()
         elif self.game_state == co.PLAY_STATE:
             self.draw_game(dt)
+            pyg.display.flip()
             if self.is_level_over():
-                pass
-        pyg.display.flip()
+                self.change_state(co.EOL_STATE)
+        elif self.game_state == co.EOL_STATE:
+            self.draw_game(dt)
+            self.draw_eol()
+            pyg.display.flip()
             
     def draw_menu(self):
-        self.screen.blit(self.menu, (0, 0))
+        if not self.is_menu_drawn:
+            self.screen.blit(self.menu, (0, 0))
+            pyg.display.flip()
+            self.is_menu_drawn = True
             
     def draw_game(self, dt):
         self.screen.blit(self.background, (0, 0))
         
         self.draw_text()
-        self.draw_neutron_count()
+        if self.game_state == co.PLAY_STATE:
+            self.draw_neutron_count()
         
         for electron in self.electrons:
             electron.move(dt / co.FRAME_INTERVAL)
@@ -119,7 +153,7 @@ class Game():
             
         self.atoms[:] = [atom for atom in self.atoms if not atom.to_delete]
         
-        self.can_play = (len(self.neutrons) == 0)
+        self.can_play = (len(self.neutrons) == 0) and (self.game_state == co.PLAY_STATE)
         self.is_far_enough = (util.distance(self.click_x, self.click_y, self.mouse_x, self.mouse_y) >= co.MIN_DISTANCE_TO_PLAY)
         if self.is_clicking and self.can_play:
             self.draw_player_arrow()
@@ -139,24 +173,56 @@ class Game():
             
     def draw_neutron_count(self):
         self.screen.blit(textures.NEUTRON_TEXTURE.convert_alpha(), (co.NEUTRON_COUNT_X, co.NEUTRON_COUNT_Y))
-        util.draw_text(self.screen, str(self.launched_neutron), co.NEUTRON_COUNT_TEXT_SIZE, (co.NEUTRON_COUNT_TEXT_X, co.NEUTRON_COUNT_TEXT_Y), (0, 0, 0))
+        if self.launched_neutrons == 0:
+            color = co.NEUTRON_COUNT_0_COLOR
+        elif self.launched_neutrons < self.level_required_neutrons:
+            color = co.NEUTRON_COUNT_LESS_COLOR
+        elif self.launched_neutrons == self.level_required_neutrons:
+            color = co.NEUTRON_COUNT_EQUAL_COLOR
+        elif self.launched_neutrons > self.level_required_neutrons:
+            color = co.NEUTRON_COUNT_MORE_COLOR
+        util.draw_text(self.screen,
+                       "{}/{}".format(self.launched_neutrons, self.level_required_neutrons),
+                       co.NEUTRON_COUNT_TEXT_SIZE,
+                       (co.NEUTRON_COUNT_TEXT_X,co.NEUTRON_COUNT_TEXT_Y),
+                       color)
+        
+    def draw_eol(self):
+        self.screen.blit(self.eol, (co.EOL_X, co.EOL_Y))
+        util.draw_text(self.screen, str(self.level_required_neutrons), co.EOL_TEXT_SIZE, (co.EOL_REQUIRED_TEXT_X, co.EOL_REQUIRED_TEXT_Y), co.NEUTRON_COUNT_0_COLOR)
+        
+        if self.launched_neutrons < self.level_required_neutrons:
+            color = co.NEUTRON_COUNT_LESS_COLOR
+        elif self.launched_neutrons == self.level_required_neutrons:
+            color = co.NEUTRON_COUNT_EQUAL_COLOR
+        elif self.launched_neutrons > self.level_required_neutrons:
+            color = co.NEUTRON_COUNT_MORE_COLOR
+        util.draw_text(self.screen, str(self.launched_neutrons), co.EOL_TEXT_SIZE, (co.EOL_NUMBER_TEXT_X, co.EOL_NUMBER_TEXT_Y), color)
             
             
     def menu_mousedown(self, x, y, button):
+        if button != co.LEFT_CLICK:
+            return
         if util.is_point_in_rect(co.LEVELS_BT, x, y):
             self.levels.restart()
             self.load_next_level()
-            self.change_state(co.PLAY_STATE)
         elif util.is_point_in_rect(co.RANDOM_BT, x, y):
             pass
         elif util.is_point_in_rect(co.QUIT_BT, x, y):
             self.stopping()
         pass
+    
+    def eol_mousedown(self, x, y, button):
+        if button != co.LEFT_CLICK:
+            return
+        if util.is_point_in_rect(co.EOL_MENU_BT, x, y):
+            self.change_state(co.MENU_STATE)
+        elif util.is_point_in_rect(co.EOL_RESTART_BT, x, y):
+            self.restart_level()
+        elif util.is_point_in_rect(co.EOL_NEXT_BT, x, y):
+            self.load_next_level()
         
-    def menu_mouseup(self, x, y, button):
-        pass
-        
-    def menu_mousemove(self, x, y, dx, dy):
+    def void(self, **kwargs):
         pass
         
     def play_mousedown(self, x, y, button):
@@ -184,7 +250,7 @@ class Game():
     
     
     def generate_neutron(self):
-        self.launched_neutron += 1
+        self.launched_neutrons += 1
         angle = math.pi/2 - math.atan2(self.mouse_x - self.click_x, (self.mouse_y - self.click_y))
         vx, vy = util.polar_to_cartesian(co.NEUTRON_SPEED, angle)
         neutron = neutrons.Neutron(self.click_x, self.click_y, vx, vy)

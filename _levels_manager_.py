@@ -11,12 +11,19 @@ class Levels():
         self.atoms = []
         self.line1 = ""
         self.line2 = ""
+        self.required_neutrons = 0
         
     def restart(self):
         self.index = 0
         
+    def get_current_level(self):
+        return self.__load_level_index()
+        
     def get_next_level(self):
         self.index += 1
+        return self.__load_level_index()
+    
+    def __load_level_index(self):
         if self.index == 1:
             self.__level1()
         elif self.index == 2:
@@ -24,13 +31,15 @@ class Levels():
         elif self.index == 3:
             self.__level3()
             
-        return (self.atoms, self.line1, self.line2)
+        return (self.atoms, self.line1, self.line2, self.required_neutrons)
     
     def __level1(self):
         self.atoms = []
+        self.atoms.append(neutron_atoms.U235((co.WIDTH - co.U235_SIZE) / 2, (co.HEIGHT - co.U235_SIZE) / 2, 2))
+        #
         self.line1 = "Click, drag and release left click to launch a neutron (blue)."
         self.line2 = "Propel it into a fissile atom (pinkish circles) to generate more neutrons !"
-        self.atoms.append(neutron_atoms.U235((co.WIDTH - co.U235_SIZE) / 2, (co.HEIGHT - co.U235_SIZE) / 2, 2))
+        self.required_neutrons = 1
         
         
     def __level2(self):
@@ -40,5 +49,4 @@ class Levels():
         pass
     
     def create_random_level(self):
-        
         return ([], "", "")

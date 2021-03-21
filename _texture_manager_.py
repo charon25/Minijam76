@@ -5,6 +5,8 @@ import co
 BACKGROUND_TEXTURE = pyg.image.load(co.BACKGROUND_PATH)
 #MENU
 MENU_TEXTURE = pyg.image.load(co.MENU_PATH)
+#FIN NIVEAU
+EOL_TEXTURE = pyg.image.load(co.EOL_PATH)
 
 #NEUTRON
 NEUTRON_TEXTURE = pyg.image.load(co.NEUTRON_PATH)
