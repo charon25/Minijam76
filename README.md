@@ -1,5 +1,5 @@
 # Spalt
-This game was made by me alone between the 19<sup>th</sup> and 21<sup>st</sup> of March 2021 for the [https://itch.io/jam/mini-jam-76-radiation](**MiniJam 76**) on the theme *Radiation* with the limitation *One Handed Controls*.
+This game was made by me alone between the 19<sup>th</sup> and 21<sup>st</sup> of March 2021 for the [**MiniJam 76**](https://itch.io/jam/mini-jam-76-radiation) on the theme *Radiation* with the limitation *One Handed Controls*.
 
 It is my first game made in Python (with Pygame only) !
 
