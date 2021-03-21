@@ -1,5 +1,6 @@
 import co
-import math
+import util
+import math, random
 import _atoms_ as atoms
 import _stable_atoms_ as stable_atoms
 import _neutron_atoms_ as neutron_atoms
@@ -14,8 +15,13 @@ class Levels():
         self.line2 = ""
         self.required_neutrons = 0
         
+        
+    def reset_all_atoms(self):
+        for atom in self.atoms:
+            atom.reset()
+        
     def restart(self):
-        self.index = 4
+        self.index = 0
         
     def get_current_level(self):
         return self.__load_level_index()
@@ -42,7 +48,12 @@ class Levels():
         elif self.index == 8:
             self.__level8()
             
+        self.reset_all_atoms()
         return (self.atoms, self.line1, self.line2, self.required_neutrons)
+    
+    def reload_last_level(self):
+        self.reset_all_atoms()
+        return (self.atoms, "", "", -1)
     
     def __level1(self):
         self.atoms = []
@@ -131,10 +142,43 @@ class Levels():
         self.line2 = "I kinda ran out of time for more levels, but you can still play random ones!"
         self.required_neutrons = 2
             
+
+    def get_random_atom(self):
+        x, y = random.randint(0, co.WIDTH - co.U235_SIZE - 10), random.randint(0, co.HEIGHT - co.U235_SIZE - 10)
+        while any(util.is_there_atom_collisions(x, y, atom.x, atom.y) for atom in self.atoms):
+            x, y = random.randint(0, co.WIDTH - co.U235_SIZE - 10), random.randint(0, co.HEIGHT - co.U235_SIZE - 10)
+        r = random.randint(9, 19)
+        if r == 9:
+            return neutron_atoms.U235(x, y, 1)
+        if r == 10:
+            return neutron_atoms.U235(x, y, 2)
+        if r == 11:
+            return neutron_atoms.U236(x, y)
+        if r == 12:
+            return decaying_atoms.U237(x, y)
+        if r == 13:
+            return neutron_atoms.U238(x, y)
+        if r == 14:
+            return decaying_atoms.U239(x, y)
+        if r == 15:
+            return neutron_atoms.Np237(x, y)
+        if r == 16:
+            return decaying_atoms.Np238(x, y)
+        if r == 17:
+            return decaying_atoms.Np239(x, y)
+        if r == 18:
+            return decaying_atoms.Pu238(x, y)
+        if r == 19:
+            return neutron_atoms.Pu239(x, y)
         
     
     def create_random_level(self):
-        return ([], "", "")
+        self.atoms = []
+        n_atoms = random.randint(co.RAND_MIN_ATOMS, co.RAND_MAX_ATOMS)
+        for i in range(n_atoms):
+            self.atoms.append(self.get_random_atom())
+        
+        return (self.atoms, "", "", -1)
     
     
     

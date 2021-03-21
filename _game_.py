@@ -23,6 +23,7 @@ class Game():
         self.background = textures.BACKGROUND_TEXTURE.convert_alpha()
         self.menu = textures.MENU_TEXTURE.convert_alpha()
         self.eol = textures.EOL_TEXTURE.convert_alpha()
+        self.eog = textures.EOG_TEXTURE.convert_alpha()
         self.restart_bt = textures.RESTART_BT_TEXTURE.convert_alpha()
         self.help = textures.HELP_TEXTURE.convert_alpha()
         #Listener
@@ -76,6 +77,10 @@ class Game():
             self.listener.set_mousedown_callback(self.eol_mousedown)
             self.listener.set_mouseup_callback(self.void)
             self.listener.set_mousemove_callback(self.void)
+        elif self.game_state == co.EOG_STATE:
+            self.listener.set_mousedown_callback(self.eol_mousedown)
+            self.listener.set_mouseup_callback(self.void)
+            self.listener.set_mousemove_callback(self.void)
             
     def reset_screen(self):
         self.neutrons = []
@@ -84,22 +89,24 @@ class Game():
         self.electrons = []
         self.change_state(co.PLAY_STATE)
             
-    def load_next_level(self):
+    def load_level(self, level):
         self.reset_screen()
-        #
-        level = self.levels.get_next_level()
         self.atoms = level[0].copy()
         self.level_text = level[1], level[2]
         self.level_required_neutrons = level[3]
+        
+    def load_next_level(self):
+        self.load_level(self.levels.get_next_level())
         
     def restart_level(self):
-        self.reset_screen()
-        #
-        level = self.levels.get_current_level()
-        self.atoms = level[0].copy()
-        self.level_text = level[1], level[2]
-        self.level_required_neutrons = level[3]
+        self.load_level(self.levels.get_current_level())
         
+    def load_random_level(self):
+        self.load_level(self.levels.create_random_level())
+        
+    def restart_random_level(self):
+        self.load_level(self.levels.reload_last_level())
+    
           
     def loop(self):
         dt = self.clock.tick(500)
@@ -110,10 +117,17 @@ class Game():
             self.draw_game(dt)
             pyg.display.flip()
             if self.is_level_over():
-                self.change_state(co.EOL_STATE)
+                if self.levels.index < co.LEVELS_COUNT:
+                    self.change_state(co.EOL_STATE)
+                else:
+                    self.change_state(co.EOG_STATE)
         elif self.game_state == co.EOL_STATE:
             self.draw_game(dt)
-            self.draw_eol()
+            self.draw_eol(False)
+            pyg.display.flip()
+        elif self.game_state == co.EOG_STATE:
+            self.draw_game(dt)
+            self.draw_eol(True)
             pyg.display.flip()
             
     def draw_menu(self):
@@ -128,9 +142,6 @@ class Game():
             self.screen.blit(self.help, (co.HELP_X, co.HELP_Y))
         
         self.draw_text()
-        if self.game_state == co.PLAY_STATE:
-            self.draw_neutron_count()
-            self.screen.blit(self.restart_bt, (co.RESTART_BT_X, co.RESTART_BT_Y))
         
         for electron in self.electrons:
             electron.move(dt / co.FRAME_INTERVAL)
@@ -160,10 +171,14 @@ class Game():
             
         self.atoms[:] = [atom for atom in self.atoms if not atom.to_delete]
         
-        self.can_play = (self.game_state == co.PLAY_STATE)
+        self.can_play = (sum(atom.over for atom in self.atoms) > 0) and (self.game_state == co.PLAY_STATE)
         self.is_far_enough = (util.distance(self.click_x, self.click_y, self.mouse_x, self.mouse_y) >= co.MIN_DISTANCE_TO_PLAY)
         if self.is_clicking and self.can_play:
             self.draw_player_arrow()
+                        
+        if self.game_state == co.PLAY_STATE:
+            self.draw_neutron_count()
+            self.screen.blit(self.restart_bt, (co.RESTART_BT_X, co.RESTART_BT_Y))
             
         if sum(atom.over for atom in self.atoms) == 0:
             self.time_since_over += dt
@@ -193,24 +208,40 @@ class Game():
             color = co.NEUTRON_COUNT_EQUAL_COLOR
         elif self.launched_neutrons > self.level_required_neutrons:
             color = co.NEUTRON_COUNT_MORE_COLOR
-        util.draw_text(self.screen,
-                       "{}/{}".format(self.launched_neutrons, self.level_required_neutrons),
-                       co.NEUTRON_COUNT_TEXT_SIZE,
-                       (co.NEUTRON_COUNT_TEXT_X,co.NEUTRON_COUNT_TEXT_Y),
-                       color)
         
-    def draw_eol(self):
-        self.screen.blit(self.eol, (co.EOL_X, co.EOL_Y))
-        util.draw_text(self.screen, str(self.level_required_neutrons), co.EOL_TEXT_SIZE, (co.EOL_REQUIRED_TEXT_X, co.EOL_REQUIRED_TEXT_Y), co.NEUTRON_COUNT_0_COLOR)
+        if self.level_required_neutrons > 0:
+            util.draw_text(self.screen,
+                           "{}/{}".format(self.launched_neutrons, self.level_required_neutrons),
+                           co.NEUTRON_COUNT_TEXT_SIZE,
+                           (co.NEUTRON_COUNT_TEXT_X,co.NEUTRON_COUNT_TEXT_Y),
+                           color)
+        else:
+            util.draw_text(self.screen,
+                           str(self.launched_neutrons),
+                           co.NEUTRON_COUNT_TEXT_SIZE,
+                           (co.NEUTRON_COUNT_TEXT_X,co.NEUTRON_COUNT_TEXT_Y),
+                           co.NEUTRON_COUNT_0_COLOR)
         
-        if self.launched_neutrons < self.level_required_neutrons:
+    def draw_eol(self, is_last_level):
+        if not is_last_level:
+            self.screen.blit(self.eol, (co.EOL_X, co.EOL_Y))
+        else:
+            self.screen.blit(self.eog, (co.EOL_X, co.EOL_Y))
+        
+        if self.level_required_neutrons > 0:
+            util.draw_text(self.screen, str(self.level_required_neutrons), co.EOL_TEXT_SIZE, (co.EOL_REQUIRED_TEXT_X, co.EOL_REQUIRED_TEXT_Y), co.NEUTRON_COUNT_0_COLOR)
+        else:
+            util.draw_text(self.screen, "?", co.EOL_TEXT_SIZE, (co.EOL_REQUIRED_TEXT_X, co.EOL_REQUIRED_TEXT_Y), co.NEUTRON_COUNT_0_COLOR)
+        
+        if self.level_required_neutrons < 1:
+            color = co.NEUTRON_COUNT_0_COLOR
+        elif self.launched_neutrons < self.level_required_neutrons:
             color = co.NEUTRON_COUNT_LESS_COLOR
         elif self.launched_neutrons == self.level_required_neutrons:
             color = co.NEUTRON_COUNT_EQUAL_COLOR
         elif self.launched_neutrons > self.level_required_neutrons:
             color = co.NEUTRON_COUNT_MORE_COLOR
         util.draw_text(self.screen, str(self.launched_neutrons), co.EOL_TEXT_SIZE, (co.EOL_NUMBER_TEXT_X, co.EOL_NUMBER_TEXT_Y), color)
-            
             
     def menu_mousedown(self, x, y, button):
         if button != co.LEFT_CLICK:
@@ -221,7 +252,7 @@ class Game():
             self.load_next_level()
         elif util.is_point_in_rect(co.RANDOM_BT, x, y):
             self.play_mode = co.RANDOM_MODE
-            pass
+            self.load_random_level()
         elif util.is_point_in_rect(co.QUIT_BT, x, y):
             self.stopping()
         pass
@@ -232,9 +263,15 @@ class Game():
         if util.is_point_in_rect(co.EOL_MENU_BT, x, y):
             self.change_state(co.MENU_STATE)
         elif util.is_point_in_rect(co.EOL_RESTART_BT, x, y):
-            self.restart_level()
-        elif util.is_point_in_rect(co.EOL_NEXT_BT, x, y):
-            self.load_next_level()
+            if self.play_mode == co.LEVEL_MODE:
+                self.restart_level()
+            elif self.play_mode == co.RANDOM_MODE:
+                self.restart_random_level()
+        elif util.is_point_in_rect(co.EOL_NEXT_BT, x, y) and self.game_state == co.EOL_STATE:
+            if self.play_mode == co.LEVEL_MODE:
+                self.load_next_level()
+            elif self.play_mode == co.RANDOM_MODE:
+                self.load_random_level()
         
     def void(self, **kwargs):
         pass
@@ -244,7 +281,10 @@ class Game():
             if y > co.HEIGHT:
                 return
             if util.is_point_in_rect(co.RESTART_BT, x, y):
-                self.restart_level()
+                if self.play_mode == co.LEVEL_MODE:
+                    self.restart_level()
+                elif self.play_mode == co.RANDOM_MODE:
+                    self.restart_random_level()
                 return
             self.is_clicking = True
             self.click_x = x

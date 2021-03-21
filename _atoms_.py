@@ -24,6 +24,15 @@ class Atom():
         #Value
         self.over = 0
         
+    def reset(self):
+        #Objects
+        self.to_delete = False
+        self.created_atoms = []
+        self.created_neutrons = []
+        self.electron = None
+        #Value
+        self.over = 0
+        
         
     def get_position(self):
         return (self.x, self.y)
@@ -78,6 +87,14 @@ class DecayingAtom(Atom):
         self.initial_decay_time = decay_time
         self.over = 1
         
+    def reset(self):
+        self.to_delete = False
+        self.created_atoms = []
+        self.created_neutrons = []
+        self.electron = None
+        self.over = 1
+        self.decay_time = self.initial_decay_time
+        
     def age(self, dt):
         self.decay_time -= dt
         max_shake = int(co.DECAY_MAX_SHAKE * (1 - self.decay_time / self.initial_decay_time))
@@ -99,6 +116,13 @@ class NeutronAtom(Atom):
     def __init__(self, x, y, w, h):
         super().__init__(x, y, w, h)
         self.can_absorb_neutron = True
+        self.over = 1     
+        
+    def reset(self):
+        self.to_delete = False
+        self.created_atoms = []
+        self.created_neutrons = []
+        self.electron = None
         self.over = 1
         
     def is_hit_by_neutron(self, neutron):

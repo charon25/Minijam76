@@ -1,4 +1,4 @@
-import math
+import math, random
 import co
 import pygame as pyg
 
@@ -27,3 +27,15 @@ def draw_text(screen, text, size, pos, color):
     font = get_font(size)
     img = font.render(text, False, color)
     screen.blit(img, pos)
+    
+    
+def is_there_atom_collisions(x1, y1, x2, y2):
+    if x1 + co.U235_SIZE < x2:
+        return False
+    if x1 > x2 + co.U235_SIZE:
+        return False
+    if y1 + co.U235_SIZE < y2:
+        return False
+    if y1 > y2 + co.U235_SIZE:
+        return False
+    return True

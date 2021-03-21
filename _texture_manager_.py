@@ -7,6 +7,7 @@ BACKGROUND_TEXTURE = pyg.image.load(co.BACKGROUND_PATH)
 MENU_TEXTURE = pyg.image.load(co.MENU_PATH)
 #FIN NIVEAU
 EOL_TEXTURE = pyg.image.load(co.EOL_PATH)
+EOG_TEXTURE = pyg.image.load(co.EOG_PATH)
 #BOUTON RESTART
 RESTART_BT_TEXTURE = pyg.image.load(co.RESTART_BT_PATH)
 #AIDE
