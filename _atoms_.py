@@ -13,14 +13,17 @@ class Atom():
         self.vx = float(vx)
         self.vy = float(vy)
         self.texture = None
-        #
+        #States
         self.can_decay = False
         self.can_absorb_neutron = False
-        #
+        #Objects
         self.to_delete = False
         self.created_atoms = []
         self.created_neutrons = []
         self.electron = None
+        #Value
+        self.over = 0
+        
         
     def get_position(self):
         return (self.x, self.y)
@@ -73,6 +76,7 @@ class DecayingAtom(Atom):
         self.can_decay = True
         self.decay_time = decay_time
         self.initial_decay_time = decay_time
+        self.over = 1
         
     def age(self, dt):
         self.decay_time -= dt
@@ -95,6 +99,7 @@ class NeutronAtom(Atom):
     def __init__(self, x, y, w, h):
         super().__init__(x, y, w, h)
         self.can_absorb_neutron = True
+        self.over = 1
         
     def is_hit_by_neutron(self, neutron):
         pass

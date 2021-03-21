@@ -1,6 +1,11 @@
 import pygame as pyg
 import co
 
+#FOND
+BACKGROUND_TEXTURE = pyg.image.load(co.BACKGROUND_PATH)
+#MENU
+MENU_TEXTURE = pyg.image.load(co.MENU_PATH)
+
 #NEUTRON
 NEUTRON_TEXTURE = pyg.image.load(co.NEUTRON_PATH)
 #ELECTRON
