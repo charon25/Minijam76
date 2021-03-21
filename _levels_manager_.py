@@ -15,7 +15,7 @@ class Levels():
         self.required_neutrons = 0
         
     def restart(self):
-        self.index = 0
+        self.index = 4
         
     def get_current_level(self):
         return self.__load_level_index()

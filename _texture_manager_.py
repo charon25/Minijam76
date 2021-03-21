@@ -9,6 +9,8 @@ MENU_TEXTURE = pyg.image.load(co.MENU_PATH)
 EOL_TEXTURE = pyg.image.load(co.EOL_PATH)
 #BOUTON RESTART
 RESTART_BT_TEXTURE = pyg.image.load(co.RESTART_BT_PATH)
+#AIDE
+HELP_TEXTURE = pyg.image.load(co.HELP_PATH)
 
 #NEUTRON
 NEUTRON_TEXTURE = pyg.image.load(co.NEUTRON_PATH)

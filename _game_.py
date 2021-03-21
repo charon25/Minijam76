@@ -24,12 +24,14 @@ class Game():
         self.menu = textures.MENU_TEXTURE.convert_alpha()
         self.eol = textures.EOL_TEXTURE.convert_alpha()
         self.restart_bt = textures.RESTART_BT_TEXTURE.convert_alpha()
+        self.help = textures.HELP_TEXTURE.convert_alpha()
         #Listener
         self.listener = events.EventListener()
         self.listener.set_quit_callback(self.stopping)
         #Etat
         self.game_state = None
         self.change_state(co.MENU_STATE)
+        self.play_mode = None
         self.levels = levels_manager.Levels()
         self.level_text = ["", ""]
         self.level_required_neutrons = -1
@@ -122,6 +124,8 @@ class Game():
             
     def draw_game(self, dt):
         self.screen.blit(self.background, (0, 0))
+        if self.play_mode == co.RANDOM_MODE or (self.play_mode == co.LEVEL_MODE and self.levels.index >= co.MIN_LEVEL_HELP):
+            self.screen.blit(self.help, (co.HELP_X, co.HELP_Y))
         
         self.draw_text()
         if self.game_state == co.PLAY_STATE:
@@ -212,9 +216,11 @@ class Game():
         if button != co.LEFT_CLICK:
             return
         if util.is_point_in_rect(co.LEVELS_BT, x, y):
+            self.play_mode = co.LEVEL_MODE
             self.levels.restart()
             self.load_next_level()
         elif util.is_point_in_rect(co.RANDOM_BT, x, y):
+            self.play_mode = co.RANDOM_MODE
             pass
         elif util.is_point_in_rect(co.QUIT_BT, x, y):
             self.stopping()
