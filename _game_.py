@@ -21,6 +21,7 @@ class Game():
         pyg.mixer.init()
         pyg.display.set_caption(co.SCREEN_TITLE)
         self.screen = pyg.display.set_mode(co.SCREEN_SIZE)
+        pyg.display.set_icon(textures.NEUTRON_TEXTURE.convert_alpha())
         #Textures
         self.background = textures.BACKGROUND_TEXTURE.convert_alpha()
         self.menu = textures.MENU_TEXTURE.convert_alpha()
