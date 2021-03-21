@@ -3,6 +3,7 @@ import random, math
 import util
 import _neutrons_ as neutrons
 import _electrons_ as electrons
+import pygame as pyg
 
 class Atom():
     def __init__(self, x, y, w, h, vx=0.0, vy=0.0):
@@ -56,9 +57,13 @@ class Atom():
             self.vy = min(0, self.vy + co.ATOM_BRAKE * r)
             
     def reflect_horizontal(self):
+        if self.vy > 1:
+            pyg.event.post(pyg.event.Event(co.WALL_TYPE))
         self.vy *= -1
         
     def reflect_vertical(self):
+        if self.vx > 1:
+            pyg.event.post(pyg.event.Event(co.WALL_TYPE))
         self.vx *= -1
         
     def has_created_atoms(self):

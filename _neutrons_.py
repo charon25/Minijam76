@@ -1,5 +1,6 @@
 import co
 import _texture_manager_ as Textures
+import pygame as pyg
 
 class Neutron():
     def __init__(self, x, y, vx=0.0, vy=0.0):
@@ -47,6 +48,8 @@ class Neutron():
         self.bounces += 1
         if self.bounces > co.NEUTRON_MAX_BOUNCES:
             self.to_delete = True
+        else:
+            pyg.event.post(pyg.event.Event(co.WALL_TYPE))
         
     def does_collide_with_atom(self, atom):
         if not atom.can_absorb_neutron:

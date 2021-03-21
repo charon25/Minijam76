@@ -1,3 +1,4 @@
+import pygame as pyg
 import _atoms_ as atoms
 import _stable_atoms_ as stable_atoms
 import _decaying_atoms_ as decaying_atoms
@@ -14,6 +15,7 @@ class U234(atoms.NeutronAtom):
         self.type = _type
         
     def is_hit_by_neutron(self, neutron):
+        pyg.event.post(pyg.event.Event(co.ABSORB_TYPE))
         self.to_delete = True
         neutron.to_delete = True
         self.created_atoms.append(U235(self.x, self.y, self.type))
@@ -26,6 +28,7 @@ class U235(atoms.NeutronAtom):
         self.texture = textures.U235_TEXTURES[self.type].convert_alpha()
         
     def is_hit_by_neutron(self, neutron):
+        pyg.event.post(pyg.event.Event(co.FISSION_TYPE))
         self.to_delete = True
         neutron.to_delete = True
         if self.type == co.U235_NEUTRON:
@@ -88,6 +91,7 @@ class U236(atoms.NeutronAtom):
         self.texture = textures.U236_TEXTURE.convert_alpha()
         
     def is_hit_by_neutron(self, neutron):
+        pyg.event.post(pyg.event.Event(co.ABSORB_TYPE))
         self.to_delete = True
         neutron.to_delete = True
         self.created_atoms.append(decaying_atoms.U237(self.x, self.y))
@@ -99,6 +103,7 @@ class U238(atoms.NeutronAtom):
         self.texture = textures.U238_TEXTURE.convert_alpha()
         
     def is_hit_by_neutron(self, neutron):
+        pyg.event.post(pyg.event.Event(co.ABSORB_TYPE))
         self.to_delete = True
         neutron.to_delete = True
         self.created_atoms.append(decaying_atoms.U239(self.x, self.y))
@@ -110,6 +115,7 @@ class Np237(atoms.NeutronAtom):
         self.texture = textures.NP237_TEXTURE.convert_alpha()
         
     def is_hit_by_neutron(self, neutron):
+        pyg.event.post(pyg.event.Event(co.ABSORB_TYPE))
         self.to_delete = True
         neutron.to_delete = True
         self.created_atoms.append(decaying_atoms.Np238(self.x, self.y))
@@ -121,6 +127,7 @@ class Pu239(atoms.NeutronAtom):
         self.texture = textures.PU239_TEXTURE.convert_alpha()
         
     def is_hit_by_neutron(self, neutron):
+        pyg.event.post(pyg.event.Event(co.FISSION_TYPE))
         self.to_delete = True
         neutron.to_delete = True
         cx = self.x + self.w / 2

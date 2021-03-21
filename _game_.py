@@ -8,6 +8,7 @@ import _decaying_atoms_ as decaying_atoms
 import _neutrons_ as neutrons
 import _texture_manager_ as textures
 import _levels_manager_ as levels_manager
+import _sounds_manager_ as sounds_manager
 import util
 import time, math
 
@@ -17,6 +18,7 @@ class Game():
     
     def start(self):
         pyg.init()
+        pyg.mixer.init()
         pyg.display.set_caption(co.SCREEN_TITLE)
         self.screen = pyg.display.set_mode(co.SCREEN_SIZE)
         #Textures
@@ -29,6 +31,10 @@ class Game():
         #Listener
         self.listener = events.EventListener()
         self.listener.set_quit_callback(self.stopping)
+        self.listener.set_sound_callback(self.play_sound)
+        #Sons
+        self.sounds = sounds_manager.SoundManager()
+        self.sounds.start_music()
         #Etat
         self.game_state = None
         self.change_state(co.MENU_STATE)
@@ -62,6 +68,9 @@ class Game():
         pyg.display.quit()
         pyg.quit()
         
+    def play_sound(self, sound):
+        self.sounds.play_sound(sound)
+        
     def change_state(self, new_state):
         self.game_state = new_state
         if self.game_state == co.MENU_STATE:
@@ -74,10 +83,12 @@ class Game():
             self.listener.set_mouseup_callback(self.play_mouseup)
             self.listener.set_mousemove_callback(self.play_mousemove)
         elif self.game_state == co.EOL_STATE:
+            self.sounds.play_sound("eol")
             self.listener.set_mousedown_callback(self.eol_mousedown)
             self.listener.set_mouseup_callback(self.void)
             self.listener.set_mousemove_callback(self.void)
         elif self.game_state == co.EOG_STATE:
+            self.sounds.play_sound("eol")
             self.listener.set_mousedown_callback(self.eol_mousedown)
             self.listener.set_mouseup_callback(self.void)
             self.listener.set_mousemove_callback(self.void)
@@ -247,27 +258,31 @@ class Game():
         if button != co.LEFT_CLICK:
             return
         if util.is_point_in_rect(co.LEVELS_BT, x, y):
+            self.sounds.play_sound("click")
             self.play_mode = co.LEVEL_MODE
             self.levels.restart()
             self.load_next_level()
         elif util.is_point_in_rect(co.RANDOM_BT, x, y):
+            self.sounds.play_sound("click")
             self.play_mode = co.RANDOM_MODE
             self.load_random_level()
         elif util.is_point_in_rect(co.QUIT_BT, x, y):
             self.stopping()
-        pass
     
     def eol_mousedown(self, x, y, button):
         if button != co.LEFT_CLICK:
             return
         if util.is_point_in_rect(co.EOL_MENU_BT, x, y):
+            self.sounds.play_sound("click")
             self.change_state(co.MENU_STATE)
         elif util.is_point_in_rect(co.EOL_RESTART_BT, x, y):
+            self.sounds.play_sound("click")
             if self.play_mode == co.LEVEL_MODE:
                 self.restart_level()
             elif self.play_mode == co.RANDOM_MODE:
                 self.restart_random_level()
         elif util.is_point_in_rect(co.EOL_NEXT_BT, x, y) and self.game_state == co.EOL_STATE:
+            self.sounds.play_sound("click")
             if self.play_mode == co.LEVEL_MODE:
                 self.load_next_level()
             elif self.play_mode == co.RANDOM_MODE:
@@ -281,6 +296,7 @@ class Game():
             if y > co.HEIGHT:
                 return
             if util.is_point_in_rect(co.RESTART_BT, x, y):
+                self.sounds.play_sound("click")
                 if self.play_mode == co.LEVEL_MODE:
                     self.restart_level()
                 elif self.play_mode == co.RANDOM_MODE:
@@ -307,10 +323,12 @@ class Game():
     
     
     def generate_neutron(self):
+        self.sounds.play_sound("launch-neutron")
         self.launched_neutrons += 1
         angle = math.pi/2 - math.atan2(self.mouse_x - self.click_x, (self.mouse_y - self.click_y))
         vx, vy = util.polar_to_cartesian(co.NEUTRON_SPEED, angle)
         neutron = neutrons.Neutron(self.click_x, self.click_y, vx, vy)
+        pyg.event.post(pyg.event.Event(555555, {}))
         self.neutrons.append(neutron)
     
     def is_level_over(self):

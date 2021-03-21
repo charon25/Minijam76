@@ -1,3 +1,4 @@
+import pygame as pyg
 import _texture_manager_ as textures
 import _atoms_ as atoms
 import _neutron_atoms_ as neutron_atoms
@@ -11,6 +12,7 @@ class U237(atoms.DecayingAtom):
         self.texture = textures.U237_TEXTURE.convert_alpha()
         
     def disintegrate(self):
+        pyg.event.post(pyg.event.Event(co.DISINTEGRATION_TYPE))
         self.to_delete = True
         self.created_atoms.append(neutron_atoms.Np237(self.x0, self.y0))
         
@@ -21,6 +23,7 @@ class U239(atoms.DecayingAtom):
         self.texture = textures.U239_TEXTURE.convert_alpha()
         
     def disintegrate(self):
+        pyg.event.post(pyg.event.Event(co.DISINTEGRATION_TYPE))
         self.to_delete = True
         self.created_atoms.append(Np239(self.x0, self.y0))
        
@@ -31,6 +34,7 @@ class Np238(atoms.DecayingAtom):
         self.texture = textures.NP238_TEXTURE.convert_alpha()
         
     def disintegrate(self):
+        pyg.event.post(pyg.event.Event(co.DISINTEGRATION_TYPE))
         self.to_delete = True
         self.created_atoms.append(Pu238(self.x0, self.y0))
         
@@ -41,6 +45,7 @@ class Np239(atoms.DecayingAtom):
         self.texture = textures.NP239_TEXTURE.convert_alpha()
         
     def disintegrate(self):
+        pyg.event.post(pyg.event.Event(co.DISINTEGRATION_TYPE))
         self.to_delete = True
         self.created_atoms.append(neutron_atoms.Pu239(self.x0, self.y0))
         
@@ -51,6 +56,7 @@ class Pu238(atoms.DecayingAtom):
         self.texture = textures.PU238_TEXTURE.convert_alpha()
         
     def disintegrate(self):
+        pyg.event.post(pyg.event.Event(co.DISINTEGRATION_TYPE))
         self.to_delete = True
         self.created_atoms.append(neutron_atoms.U234(self.x0, self.y0, 2))
         
