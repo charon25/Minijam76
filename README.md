@@ -5,3 +5,6 @@ It is my first game made in Python (with Pygame only) !
 
 ## Link
 You can find more about the game and play it here : [itch.io/spalt](https://charon25.itch.io/spalt).
+
+# Known bugs
+* If you try to launch a neutron from the very side of the screen, it will dispawn instantly but still add one to your neutron count.
